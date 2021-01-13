@@ -179,6 +179,7 @@ public class ServiceComponent {
 
         StatisticsConfiguration statisticsConfiguration = new StatisticsConfiguration(new MetricsFactory());
         siddhiManager.setStatisticsConfiguration(statisticsConfiguration);
+        // TODO: 2021-01-11  initiate heartbeat here: do in a separate thread
         StreamProcessorDataHolder.setSiddhiManager(siddhiManager);
         StreamProcessorDataHolder.setStatisticsConfiguration(statisticsConfiguration);
 

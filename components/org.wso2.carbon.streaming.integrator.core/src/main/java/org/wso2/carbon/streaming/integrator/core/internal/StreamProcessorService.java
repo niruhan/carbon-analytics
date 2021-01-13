@@ -76,6 +76,7 @@ public class StreamProcessorService {
             throw new SiddhiAppAlreadyExistException("There is a Siddhi App with name " + siddhiAppName +
                     " is already exist");
         }
+        // TODO: 2021-01-11  communicate information to monitoring dashboard heartbeat thread
         SiddhiManager siddhiManager = StreamProcessorDataHolder.getSiddhiManager();
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiAppContent);
 

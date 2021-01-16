@@ -17,33 +17,51 @@
  */
 package org.wso2.carbon.si.metrics.core;
 
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
+import net.minidev.json.JSONObject;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.testng.annotations.Test;
-import org.wso2.carbon.config.ConfigurationException;
-import org.wso2.carbon.si.metrics.core.util.TestConstants;
-import org.wso2.carbon.si.metrics.core.util.TestUtils;
-import org.wso2.carbon.si.metrics.prometheus.reporter.config.PrometheusMetricsConfig;
-import org.wso2.carbon.si.metrics.prometheus.reporter.config.PrometheusReporterConfig;
 
 /**
- * Test Cases for {@link PrometheusMetricsConfig}.
+ * Test Cases for {@link }.
  */
 public class HeartBeatTest {
 
-    private static PrometheusMetricsConfig prometheusMetricsConfig;
-
-    @BeforeClass
-    private void load() throws ConfigurationException {
-        prometheusMetricsConfig = TestUtils.getConfigProvider(TestConstants.PROMETHEUS_CONFIG_FILE_NAME)
-                .getConfigurationObject(PrometheusMetricsConfig.class);
-    }
+//    @BeforeClass
+//    private void load() throws ConfigurationException {
+//        prometheusMetricsConfig = TestUtils.getConfigProvider(TestConstants.PROMETHEUS_CONFIG_FILE_NAME)
+//                .getConfigurationObject(PrometheusMetricsConfig.class);
+//    }
 
     @Test
     public void testPrometheusConfigLoad() {
-        PrometheusReporterConfig config = prometheusMetricsConfig.getReporting().getPrometheus().iterator().next();
-        Assert.assertEquals(config.getName(), TestConstants.PROMETHEUS_REPORTER_NAME);
-        Assert.assertTrue(config.isEnabled());
-        Assert.assertEquals(config.getServerURL(), "http://localhost:9005");
+        HttpPost post = new HttpPost("https://webhook.site/e5c57bf4-bc46-4272-b415-315d36374200");
+
+        // add request parameter, form parameters
+//        List<NameValuePair> urlParameters = new ArrayList<>();
+//        urlParameters.add(new BasicNameValuePair("username", "abc"));
+//        urlParameters.add(new BasicNameValuePair("password", "123"));
+//        urlParameters.add(new BasicNameValuePair("custom", "secret"));
+        JSONObject json = new JSONObject();
+        json.put("someKey", "someValue2");
+
+        try {
+//            post.setEntity(new UrlEncodedFormEntity(urlParameters));
+//            post.set
+            StringEntity params = new StringEntity(json.toString());
+            post.addHeader("content-type", "application/json");
+            post.setEntity(params);
+
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            CloseableHttpResponse response = httpClient.execute(post);
+
+            System.out.println(EntityUtils.toString(response.getEntity()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

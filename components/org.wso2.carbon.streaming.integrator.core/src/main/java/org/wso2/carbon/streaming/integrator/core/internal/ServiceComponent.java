@@ -52,7 +52,7 @@ import org.wso2.carbon.streaming.integrator.common.SiddhiAppRuntimeService;
 import org.wso2.carbon.streaming.integrator.common.utils.config.FileConfigManager;
 import org.wso2.carbon.streaming.integrator.core.DeploymentMode;
 import org.wso2.carbon.streaming.integrator.core.NodeInfo;
-import org.wso2.carbon.streaming.integrator.core.internal.util.monitoring.dashboard.HeartBeat;
+import org.wso2.carbon.streaming.integrator.core.internal.util.monitoring.dashboard.HeartBeatComponent;
 import org.wso2.carbon.streaming.integrator.core.siddhi.error.handler.beans.ErrorStoreConfigurations;
 import org.wso2.carbon.streaming.integrator.core.ha.HAManager;
 import org.wso2.carbon.streaming.integrator.core.ha.exception.HAModeException;
@@ -184,8 +184,9 @@ public class ServiceComponent {
         StreamProcessorDataHolder.setStatisticsConfiguration(statisticsConfiguration);
 
         // TODO: 2021-01-11  initiate heartbeat here: do in a separate thread
-        HeartBeat heartBeat = new HeartBeat();
-        heartBeat.sendPostRequest();
+//        HeartBeatComponent heartBeat = new HeartBeatComponent();
+//        heartBeat.sendPostRequest();
+        HeartBeatComponent.invokeHeartbeatExecutorService(configProvider);
 
         File siddhiAppFileReference;
 

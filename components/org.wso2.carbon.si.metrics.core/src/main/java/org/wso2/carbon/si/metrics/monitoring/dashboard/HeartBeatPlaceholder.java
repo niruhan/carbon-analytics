@@ -29,9 +29,9 @@ import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 
 
-public class HeartBeat {
+public class HeartBeatPlaceholder {
 
-    public void sendPostRequest() throws IOException {
+    public void sendPostRequestPlaceholder() throws IOException {
         HttpPost post = new HttpPost("https://webhook.site/e5c57bf4-bc46-4272-b415-315d36374200");
         JSONObject json = new JSONObject();
         json.put("someKey", "someValue2");

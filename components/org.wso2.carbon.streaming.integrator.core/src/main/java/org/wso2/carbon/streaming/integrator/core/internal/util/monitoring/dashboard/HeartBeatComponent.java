@@ -63,17 +63,20 @@ public class HeartBeatComponent {
 
     public static void invokeHeartbeatExecutorService(ConfigProvider deploymentConfigs) throws IOException, ConfigurationException {
         HashMap dashboardConfigs = (LinkedHashMap) deploymentConfigs.getConfigurationObject("dashboard.config");
+        HashMap carbonConfigs = (LinkedHashMap) deploymentConfigs.getConfigurationObject("wso2.carbon");
         String heartbeatApiUrl = (String) dashboardConfigs.get("heartbeatApiUrl");
         String mgtApiUrl = (String) dashboardConfigs.get("mgtApiUrl");
         String groupId = "NA";
         long interval = (Integer) dashboardConfigs.get("heartbeatInterval");
-        String nodeId = (String) ((LinkedHashMap) deploymentConfigs.getConfigurationObject("wso2.carbon")).get("id");
+        String nodeId = (String) carbonConfigs.get("id");
+        String type = (String) carbonConfigs.get("type");
 
         final HttpPost httpPost = new HttpPost(heartbeatApiUrl);
         final String payload = "{\n" +
                 "    \"groupId\":\"" + groupId + "\",\n" +
                 "    \"nodeId\":\"" + nodeId + "\",\n" +
                 "    \"interval\":" + interval + ",\n" +
+                "    \"type\":" + type + ",\n" +
                 "    \"mgtApiUrl\":\"" + mgtApiUrl + "\"\n" +
                 "}";
 

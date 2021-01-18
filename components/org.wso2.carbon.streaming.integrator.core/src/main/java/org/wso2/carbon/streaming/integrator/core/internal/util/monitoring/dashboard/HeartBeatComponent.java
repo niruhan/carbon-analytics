@@ -25,13 +25,21 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class HeartBeatComponent {
+    private static final Logger log = LoggerFactory.getLogger(HeartBeatComponent.class);
 
     private HeartBeatComponent() {}
 
@@ -53,23 +61,22 @@ public class HeartBeatComponent {
         System.out.println(EntityUtils.toString(response.getEntity()));
     }
 
-    public static void invokeHeartbeatExecutorService(ConfigProvider deploymentConfigs) throws IOException {
+    public static void invokeHeartbeatExecutorService(ConfigProvider deploymentConfigs) throws IOException, ConfigurationException {
+        HashMap dashboardConfigs = (LinkedHashMap) deploymentConfigs.getConfigurationObject("dashboard.config");
+        String heartbeatApiUrl = (String) dashboardConfigs.get("heartbeatApiUrl");
+        String mgtApiUrl = (String) dashboardConfigs.get("mgtApiUrl");
+        String groupId = "NA";
+        long interval = (Integer) dashboardConfigs.get("heartbeatInterval");
+        String nodeId = (String) ((LinkedHashMap) deploymentConfigs.getConfigurationObject("wso2.carbon")).get("id");
 
-        String heartbeatApiUrl = configs.get("dashboard_config.dashboard_url") + File.separator + "heartbeat";
-        String groupId = configs.get("dashboard_config.group_id").toString();
-        String nodeId = configs.get("dashboard_config.node_id").toString();
-        long interval = Integer.parseInt(configs.get("dashboard_config.heartbeat_interval").toString());
-        String carbonLocalIp = System.getProperty("carbon.local.ip");
-        int internalHttpApiPort = ConfigurationLoader.getInternalInboundHttpsPort();
-        String mgtApiUrl = "https://" + carbonLocalIp + ":" + internalHttpApiPort + "/management/";
         final HttpPost httpPost = new HttpPost(heartbeatApiUrl);
-
         final String payload = "{\n" +
                 "    \"groupId\":\"" + groupId + "\",\n" +
                 "    \"nodeId\":\"" + nodeId + "\",\n" +
                 "    \"interval\":" + interval + ",\n" +
                 "    \"mgtApiUrl\":\"" + mgtApiUrl + "\"\n" +
                 "}";
+
         final StringEntity entity = new StringEntity(payload);
         httpPost.setEntity(entity);
         httpPost.setHeader("Accept", "application/json");

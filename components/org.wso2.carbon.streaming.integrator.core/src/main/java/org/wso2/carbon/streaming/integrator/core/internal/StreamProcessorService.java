@@ -44,6 +44,7 @@ import org.wso2.carbon.streaming.integrator.core.internal.exception.SiddhiAppCon
 import org.wso2.carbon.streaming.integrator.core.internal.exception.SiddhiAppDeploymentException;
 import org.wso2.carbon.streaming.integrator.core.internal.util.SiddhiAppFilesystemInvoker;
 import org.wso2.carbon.streaming.integrator.core.internal.util.SiddhiAppProcessorConstants;
+import org.wso2.carbon.streaming.integrator.core.internal.util.monitoring.dashboard.ChangeRegistryForHeartBeat;
 
 import java.util.Collection;
 import java.util.List;
@@ -79,6 +80,7 @@ public class StreamProcessorService {
         // TODO: 2021-01-11  communicate information to monitoring dashboard heartbeat thread
         SiddhiManager siddhiManager = StreamProcessorDataHolder.getSiddhiManager();
         SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiAppContent);
+        ChangeRegistryForHeartBeat.getInstance().setChangedSinceLastHeartBeat();
 
         Collection<Table> tables = siddhiAppRuntime.getTables();
         Set<String> streamNames = siddhiAppRuntime.getStreamDefinitionMap().keySet();
@@ -233,6 +235,7 @@ public class StreamProcessorService {
                 }
             }
             siddhiAppMap.remove(siddhiAppName);
+            ChangeRegistryForHeartBeat.getInstance().setChangedSinceLastHeartBeat();
             log.info("Siddhi App File " + siddhiAppName + " undeployed successfully.");
         }
     }
@@ -242,6 +245,7 @@ public class StreamProcessorService {
 
         if (siddhiAppMap.containsKey(siddhiAppName)) {
             SiddhiAppFilesystemInvoker.delete(siddhiAppName);
+            ChangeRegistryForHeartBeat.getInstance().setChangedSinceLastHeartBeat();
             return true;
         }
         return false;
@@ -256,6 +260,7 @@ public class StreamProcessorService {
             if (isUpdate || !siddhiAppMap.containsKey(siddhiAppName)) {
                 SiddhiManager siddhiManager = StreamProcessorDataHolder.getSiddhiManager();
                 SiddhiAppRuntime siddhiAppRuntime = siddhiManager.createSiddhiAppRuntime(siddhiApp);
+                ChangeRegistryForHeartBeat.getInstance().setChangedSinceLastHeartBeat();
                 if (siddhiAppRuntime != null) {
                     SiddhiAppFilesystemInvoker.save(siddhiApp, siddhiAppName);
                     return siddhiAppName;

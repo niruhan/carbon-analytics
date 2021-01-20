@@ -18,6 +18,9 @@
 
 package org.wso2.carbon.streaming.integrator.core.internal.util.monitoring.dashboard;
 
+/**
+ * This class keeps track of any changes to siddhi apps between heartbeats
+ */
 public class ChangeRegistryForHeartBeat {
     private static ChangeRegistryForHeartBeat instance = new ChangeRegistryForHeartBeat();
     private boolean isChangedSinceLastHeartBeat = false;
@@ -41,7 +44,7 @@ public class ChangeRegistryForHeartBeat {
         }
     }
 
-    public synchronized void resetChangedSinceHeartBeat() {
+    public synchronized void resetChangedSinceLastHeartBeat() {
         synchronized (lock) {
             isChangedSinceLastHeartBeat = false;
         }

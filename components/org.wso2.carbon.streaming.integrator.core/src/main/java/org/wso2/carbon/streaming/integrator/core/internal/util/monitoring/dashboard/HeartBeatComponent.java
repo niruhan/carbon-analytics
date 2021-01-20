@@ -30,7 +30,6 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.config.ConfigurationException;
 import org.wso2.carbon.config.provider.ConfigProvider;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -38,6 +37,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This class produces periodic heartbeats to inform the dashboard server of the existence of a SI node
+ */
 public class HeartBeatComponent {
     private static final Logger log = LoggerFactory.getLogger(HeartBeatComponent.class);
 
@@ -61,7 +63,8 @@ public class HeartBeatComponent {
         System.out.println(EntityUtils.toString(response.getEntity()));
     }
 
-    public static void invokeHeartbeatExecutorService(ConfigProvider deploymentConfigs) throws IOException, ConfigurationException {
+    public static void invokeHeartbeatExecutorService(ConfigProvider deploymentConfigs) throws IOException,
+            ConfigurationException {
         HashMap dashboardConfigs = (LinkedHashMap) deploymentConfigs.getConfigurationObject("dashboard.config");
         HashMap carbonConfigs = (LinkedHashMap) deploymentConfigs.getConfigurationObject("wso2.carbon");
         String heartbeatApiUrl = (String) dashboardConfigs.get("heartbeatApiUrl");
@@ -77,6 +80,8 @@ public class HeartBeatComponent {
                 "    \"nodeId\":\"" + nodeId + "\",\n" +
                 "    \"interval\":" + interval + ",\n" +
                 "    \"type\":" + type + ",\n" +
+                "    \"isChanged\":" + ChangeRegistryForHeartBeat.getInstance().getIsChangedSinceLastHeartBeat()
+                    + ",\n" +
                 "    \"mgtApiUrl\":\"" + mgtApiUrl + "\"\n" +
                 "}";
 
@@ -95,6 +100,7 @@ public class HeartBeatComponent {
             } finally {
                 try {
                     client.close();
+                    ChangeRegistryForHeartBeat.getInstance().resetChangedSinceLastHeartBeat();
                 } catch (IOException e) {
                     log.error("Error occurred while closing the connection.", e);
                 }

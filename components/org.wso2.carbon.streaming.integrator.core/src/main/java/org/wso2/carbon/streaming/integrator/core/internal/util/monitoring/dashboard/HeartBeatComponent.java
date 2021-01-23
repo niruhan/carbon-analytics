@@ -75,18 +75,28 @@ public class HeartBeatComponent {
         String type = (String) carbonConfigs.get("type");
 
         final HttpPost httpPost = new HttpPost(heartbeatApiUrl);
-        final String payload = "{\n" +
-                "    \"groupId\":\"" + groupId + "\",\n" +
-                "    \"nodeId\":\"" + nodeId + "\",\n" +
-                "    \"interval\":" + interval + ",\n" +
-                "    \"type\":" + type + ",\n" +
-                "    \"isChanged\":" + ChangeRegistryForHeartBeat.getInstance().getIsChangedSinceLastHeartBeat()
-                    + ",\n" +
-                "    \"mgtApiUrl\":\"" + mgtApiUrl + "\"\n" +
-                "}";
 
-        final StringEntity entity = new StringEntity(payload);
-        httpPost.setEntity(entity);
+        JSONObject json = new JSONObject();
+        json.put("groupId", groupId);
+        json.put("nodeId", nodeId);
+        json.put("interval", interval);
+        json.put("product", "si");
+        json.put("mgtApiUrl", mgtApiUrl);
+
+        StringEntity params = new StringEntity(json.toString());
+
+//        final String payload = "{\n" +
+//                "    \"groupId\":\"" + groupId + "\",\n" +
+//                "    \"nodeId\":\"" + nodeId + "\",\n" +
+//                "    \"interval\":" + interval + ",\n" +
+//                "    \"type\":" + type + ",\n" +
+//                "    \"isChanged\":" + ChangeRegistryForHeartBeat.getInstance().getIsChangedSinceLastHeartBeat()
+//                    + ",\n" +
+//                "    \"mgtApiUrl\":\"" + mgtApiUrl + "\"\n" +
+//                "}";
+
+//        final StringEntity entity = new StringEntity(payload);
+        httpPost.setEntity(params);
         httpPost.setHeader("Accept", "application/json");
         httpPost.setHeader("Content-type", "application/json");
 
